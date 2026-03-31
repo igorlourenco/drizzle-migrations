@@ -1,0 +1,17 @@
+{
+    "name": "drizzle-migrations",
+    "version": "1.0.0",
+    "description": "Generate, validate, and troubleshoot Drizzle ORM schema migrations with destructive change detection for PostgreSQL, MySQL, and SQLite",
+    "author": {
+      "name": "Igor Lourenço"
+    },
+    "category": "development",
+    "keywords": [
+      "drizzle",
+      "orm",
+      "migrations",
+      "database",
+      "postgresql",
+      "schema"
+    ]
+  }

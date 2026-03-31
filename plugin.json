@@ -1,7 +1,0 @@
-{
-    "name": "drizzle-migrations",
-    "source": "./",
-    "description": "Generate, validate, and troubleshoot Drizzle ORM migrations with destructive change detection for PostgreSQL, MySQL, and SQLite",
-    "strict": false,
-    "skills": ["./"]
-  }

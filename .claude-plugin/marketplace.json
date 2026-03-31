@@ -1,0 +1,20 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "igorlourenco-drizzle-migrations",
+  "version": "1.0.0",
+  "description": "Drizzle ORM migration tools: generate, validate, and troubleshoot schema migrations with destructive change detection",
+  "owner": {
+    "name": "Igor Lourenço",
+    "email": "hello@igorlourenco.com"
+  },
+  "plugins": [
+    {
+      "name": "drizzle-migrations",
+      "description": "Generate, validate, and troubleshoot Drizzle ORM schema migrations with destructive change detection for PostgreSQL, MySQL, and SQLite",
+      "source": "./plugins/drizzle-migrations",
+      "version": "1.0.0",
+      "category": "development",
+      "keywords": ["drizzle", "orm", "migrations", "database", "postgresql", "schema"]
+    }
+  ]
+}
