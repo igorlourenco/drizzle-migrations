@@ -1,6 +1,6 @@
 # drizzle-migrations
 
-An [Agent Skill](https://agentskills.io) for Claude Code and OpenAI Codex CLI that generates, validates, and troubleshoots [Drizzle ORM](https://orm.drizzle.team) migrations.
+A Claude Code plugin that generates, validates, and troubleshoots [Drizzle ORM](https://orm.drizzle.team) migrations.
 
 Ships with a **destructive change detector** that catches `DROP TABLE`, `DROP COLUMN`, unsafe type casts, and `SET NOT NULL` on existing columns — before they hit your database.
 
@@ -9,44 +9,26 @@ Works with PostgreSQL, MySQL, SQLite, Neon, Supabase, Turso, and PlanetScale.
 ## What it does
 
 - **Generates migrations** — walks you through schema changes following Drizzle best practices
-- **Validates generated SQL** — runs the bundled `validate-migration.mjs` script to flag destructive and unsafe operations with actionable suggestions
-- **Picks the right config** — includes templates for every dialect and major hosted provider (Neon, Supabase, Turso)
-- **Handles edge cases** — migration conflicts, squashing, introspecting existing databases, custom SQL in migrations
-- **CI/CD-ready** — programmatic migration runner examples for every Drizzle driver, plus Docker and GitHub Actions patterns
+- **Validates generated SQL** — flags destructive and unsafe operations with actionable fix suggestions
+- **Picks the right config** — includes templates for every dialect and major hosted provider
+- **Handles edge cases** — migration conflicts, squashing, introspecting existing databases, custom SQL
+- **CI/CD-ready** — programmatic migration runner examples for every Drizzle driver, Docker, and GitHub Actions
 
 ## Install
 
-### Claude Code
-
 ```bash
-# Add as a marketplace
+# 1. Add the marketplace
 /plugin marketplace add igorlourenco/drizzle-migrations
 
-# Install the skill
-/plugin install drizzle-migrations
+# 2. Install the plugin
+/plugin install drizzle-migrations@igorlourenco-drizzle-migrations
 ```
 
-Or manually:
-
-```bash
-# Personal (all projects)
-git clone https://github.com/igorlourenco/drizzle-migrations.git ~/.claude/skills/drizzle-migrations
-
-# Per-project (shared via git)
-git clone https://github.com/igorlourenco/drizzle-migrations.git .claude/skills/drizzle-migrations
-```
-
-### OpenAI Codex CLI
-
-```bash
-git clone https://github.com/igorlourenco/drizzle-migrations.git ~/.codex/skills/drizzle-migrations
-```
-
-Both tools use the same Agent Skills format — install once, works everywhere.
+Also works with OpenAI Codex CLI (same Agent Skills format).
 
 ## Usage
 
-The skill triggers automatically when you mention anything related to Drizzle migrations. Just talk to Claude naturally:
+The skill triggers automatically when you mention anything related to Drizzle migrations. Just talk naturally:
 
 ```
 > Add a "status" column to the posts table with a default of "draft"
@@ -70,10 +52,10 @@ The skill triggers automatically when you mention anything related to Drizzle mi
 
 ### Validation script
 
-The skill automatically runs the validator after generating migrations, but you can also use it standalone:
+The skill runs the validator automatically after generating migrations. You can also run it standalone:
 
 ```bash
-node scripts/validate-migration.mjs path/to/0001_migration.sql postgresql
+node plugins/drizzle-migrations/skills/drizzle-migrations/scripts/validate-migration.mjs path/to/0001_migration.sql postgresql
 ```
 
 Example output:
@@ -103,17 +85,25 @@ Example output:
 
 Exit codes: `0` = clean, `1` = warnings, `2` = destructive (needs approval).
 
-## What's inside
+## Repo structure
 
 ```
 drizzle-migrations/
-├── SKILL.md                              # Main skill instructions
-├── plugin.json                           # Marketplace manifest
-├── scripts/
-│   └── validate-migration.mjs            # Destructive change detector
-└── references/
-    ├── config-templates.md               # drizzle.config.ts for every dialect/provider
-    └── migrate-programmatic.md           # Migration runners for every driver + CI/CD
+├── .claude-plugin/
+│   └── marketplace.json                          # Marketplace manifest
+├── plugins/
+│   └── drizzle-migrations/
+│       ├── .claude-plugin/
+│       │   └── plugin.json                       # Plugin manifest
+│       └── skills/
+│           └── drizzle-migrations/
+│               ├── SKILL.md                      # Main skill instructions
+│               ├── scripts/
+│               │   └── validate-migration.mjs    # Destructive change detector
+│               └── references/
+│                   ├── config-templates.md        # drizzle.config.ts for every dialect
+│                   └── migrate-programmatic.md    # Migration runners + CI/CD patterns
+└── README.md
 ```
 
 ## Supported dialects & drivers
@@ -126,8 +116,6 @@ drizzle-migrations/
 | Turso      | `@libsql/client`                                               |
 
 ## Detected issues
-
-The validator flags these patterns in generated migration SQL:
 
 | Severity    | Pattern              | What it catches                                    |
 | ----------- | -------------------- | -------------------------------------------------- |
@@ -142,12 +130,12 @@ The validator flags these patterns in generated migration SQL:
 | Warning     | `RENAME COLUMN`      | Breaks queries referencing old column name          |
 | Info        | `NOT NULL` no default| INSERTs fail if column value not provided          |
 
-MySQL-specific: warns that DDL is not transactional (partial failures leave dirty state).  
+MySQL-specific: warns that DDL is not transactional (partial failures leave dirty state).
 SQLite-specific: warns about limited ALTER TABLE support.
 
 ## Contributing
 
-PRs welcome. Some ideas:
+PRs welcome. Ideas:
 
 - [ ] More dialect-specific validations (e.g., MySQL charset/collation changes)
 - [ ] Rollback SQL generation for destructive migrations
